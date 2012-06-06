@@ -405,7 +405,7 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
         int outBoundBottom = ([self bounds].size.height - gHeight) / 2;
         
         if ((mouseLocation.y > outBoundTop || mouseLocation.y < outBoundBottom) && [self.gradient numberOfColorStops] > 2) {
-            [NSClassFromString(@"NSToolbarPoofAnimator") runPoofAtPoint: [NSEvent mouseLocation]]; // !!! UNDOCUMENTED -> USE WITH CAUTION!
+            //[NSClassFromString(@"NSToolbarPoofAnimator") runPoofAtPoint: [NSEvent mouseLocation]]; // !!! UNDOCUMENTED -> USE WITH CAUTION!
             
             [self _deleteColorAtIndex: _draggingKnobAtIndex];
             [self _setGradientWarningTarget: self.gradient];
