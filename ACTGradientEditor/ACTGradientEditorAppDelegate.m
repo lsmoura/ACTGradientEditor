@@ -4,7 +4,7 @@
 //
 //  Created by Alex on 14/09/2011.
 //  Copyright 2011 ACT Productions. All rights reserved.
-//
+//  Copyright 2012 Sergio Moura.
 
 #import "ACTGradientEditorAppDelegate.h"
 
@@ -15,10 +15,10 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     [gradientEditor setDelegate:self];
     
-    [self gradientChanged: self];
+    [self gradientChanged:self];
 }
 
-- (IBAction)gradientChanged: (id)sender {
+- (IBAction)gradientChanged:(id)sender {
     //[gradientEditor setGradientHeight: [slider doubleValue]];
     [gradientView setGradient: [gradientEditor gradient]];
     [gradientView setAngle: [angle doubleValue]];

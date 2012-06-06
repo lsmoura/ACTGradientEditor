@@ -4,9 +4,38 @@
 //
 //  Created by Alex on 14/09/2011.
 //  Copyright 2011 ACT Productions. All rights reserved.
-//
+//  Copyright 2012 Sergio Moura.
 
 #import "ACTGradientEditor.h"
+
+// Colors
+#define kTopKnobColor [NSColor colorWithCalibratedWhite: 0.95 alpha: 1]
+#define kBottomKnobColor [NSColor colorWithCalibratedWhite: 0.6 alpha: 1]
+#define kSelectedTopKnobColor [NSColor alternateSelectedControlColor]
+#define kSelectedBottomKnobColor [[NSColor alternateSelectedControlColor] shadowWithLevel: 0.35]
+
+#define kKnobBorderColor [[NSColor blackColor] colorWithAlphaComponent: 0.56]
+#define kKnobInsideBorderColor [[NSColor blackColor] colorWithAlphaComponent: 0.56]
+#define kViewBorderColor [[NSColor blackColor] colorWithAlphaComponent: 0.56]
+
+#define kDefaultAddColor [NSColor whiteColor]
+
+// Chessboard BG
+#define kChessboardBGWidth 5
+#define kChessboardBGColor1 [NSColor whiteColor]
+#define kChessboardBGColor2 [NSColor lightGrayColor]
+
+// Knob
+#define kKnobDiameter 16
+#define kKnobBorderWidth 1 // inner and outer borders alike
+
+// Gradient 'view'
+#define kViewBorderWidth 1
+#define kViewCornerRoundness 3
+#define kViewXOffset (kKnobDiameter/2 + kKnobBorderWidth) // how much to add to origin.x of the gradient rect
+
+// Other
+#define kArrowKeysMoveOffset 0.011 // color location in gradient
 
 static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
     return pow((p1.x - p2.x), 2) + pow((p1.y - p2.y), 2) <= pow(d, 2); 
@@ -37,19 +66,21 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
 @synthesize gradientHeight = _gradientHeight;
 @synthesize drawsChessboardBackground = _drawsChessboardBackground;
 
-- (id)initWithFrame: (NSRect)frame
-{
+- (id)initWithFrame: (NSRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.gradient = [[NSGradient alloc] initWithColorsAndLocations: [NSColor lightGrayColor], 0.2, [NSColor grayColor], 0.8, nil];
-        self.editable = TRUE;
-        self.gradientHeight = kKnobDiameter + kKnobBorderWidth + 6;
-        self.drawsChessboardBackground = YES;
+        _gradient = [[NSGradient alloc] initWithColorsAndLocations: [NSColor lightGrayColor], 0.2, [NSColor grayColor], 0.8, nil];
+        _editable = TRUE;
+        _gradientHeight = kKnobDiameter + kKnobBorderWidth + 6;
+        _drawsChessboardBackground = YES;
         
         _draggingKnobAtIndex = -1;
         _editingKnobAtIndex = -1;
         
-        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowWillClose:) name: @"NSWindowWillCloseNotification" object: nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self 
+                                                 selector:@selector(windowWillClose:) 
+                                                     name:@"NSWindowWillCloseNotification" 
+                                                   object:nil];
     }
     
     return self;
@@ -470,7 +501,8 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
 }
 - (void)windowWillClose: (NSNotification*)aNot
 {
-    if ([[aNot object] class] == [NSColorPanel class]) { //[aNot object] == [NSColorPanel sharedColorPanel]) {
+    if ([[aNot object] isKindOfClass:[NSColorPanel class]]) {
+        //[aNot object] == [NSColorPanel sharedColorPanel]) {
         if (_editingKnobAtIndex != -1) {
             _editingKnobAtIndex = -1;
             [self setNeedsDisplay: TRUE];
@@ -521,12 +553,11 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
     
     return viewRect;
 }
-- (NSPoint)_viewPointFromGradientLocation: (CGFloat)location
-{
+- (NSPoint)_viewPointFromGradientLocation: (CGFloat)location {
     return NSMakePoint(location * [self _gradientBounds].size.width + kViewXOffset, [self bounds].size.height / 2);
 }
-- (CGFloat)_gradientLocationFromViewPoint: (NSPoint)point
-{
+
+- (CGFloat)_gradientLocationFromViewPoint: (NSPoint)point {
     return (point.x - kViewXOffset) / [self _gradientBounds].size.width;
 }
 

@@ -4,48 +4,10 @@
 //
 //  Created by Alex on 14/09/2011.
 //  Copyright 2011 ACT Productions. All rights reserved.
-//
+//  Copyright 2012 Sergio Moura.
 
 #import <Cocoa/Cocoa.h>
 #import "NSColor+ChessboardColor.h"
-
-/* TODO: 
- - NOTHING!!!
-*/
-
-// These #defines are very easy to turn into properties (with Find/Replace)
-// should you need to change them progamatically
-
-// Colors
-#define kTopKnobColor [NSColor colorWithCalibratedWhite: 0.95 alpha: 1]
-#define kBottomKnobColor [NSColor colorWithCalibratedWhite: 0.6 alpha: 1]
-#define kSelectedTopKnobColor [NSColor alternateSelectedControlColor]
-#define kSelectedBottomKnobColor [[NSColor alternateSelectedControlColor] shadowWithLevel: 0.35]
-
-#define kKnobBorderColor [[NSColor blackColor] colorWithAlphaComponent: 0.56]
-#define kKnobInsideBorderColor [[NSColor blackColor] colorWithAlphaComponent: 0.56]
-#define kViewBorderColor [[NSColor blackColor] colorWithAlphaComponent: 0.56]
-
-#define kDefaultAddColor [NSColor whiteColor]
-
-// Chessboard BG
-#define kChessboardBGWidth 5
-#define kChessboardBGColor1 [NSColor whiteColor]
-#define kChessboardBGColor2 [NSColor lightGrayColor]
-
-// Knob
-#define kKnobDiameter 16
-#define kKnobBorderWidth 1 // inner and outer borders alike
-
-// Gradient 'view'
-#define kViewBorderWidth 1
-#define kViewCornerRoundness 3
-#define kViewXOffset (kKnobDiameter/2 + kKnobBorderWidth) // how much to add to origin.x of the gradient rect
-
-// Other
-#define kArrowKeysMoveOffset 0.011 // color location in gradient
-
-// -----------
 
 @class ACTGradientEditor;
 
