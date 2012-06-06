@@ -31,7 +31,12 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
 
 @implementation ACTGradientEditor
 
-@synthesize target, action, gradient, editable, gradientHeight, drawsChessboardBackground;
+@synthesize target = _target;
+@synthesize action = _action;
+@synthesize gradient = _gradient;
+@synthesize editable = _editable;
+@synthesize gradientHeight = _gradientHeight;
+@synthesize drawsChessboardBackground = _drawsChessboardBackground;
 
 - (id)initWithFrame: (NSRect)frame
 {
@@ -61,7 +66,7 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
     [viewOutline setLineWidth: kViewBorderWidth];
     
     // DRAW BG
-    if (drawsChessboardBackground) {
+    if (self.drawsChessboardBackground) {
         NSColor* bgColor = [NSColor chessboardColorWithFirstColor: kChessboardBGColor1 secondColor: kChessboardBGColor2 squareWidth: kChessboardBGWidth];
         [bgColor set];
         [viewOutline fill];
@@ -318,9 +323,8 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
     self.gradient = [[NSGradient alloc] initWithColors: newColors atLocations: locations colorSpace: [self.gradient colorSpace]];
 }
 
-- (void)mouseDown: (NSEvent*)theEvent
-{
-    if (!editable) { return; }
+- (void)mouseDown: (NSEvent*)theEvent {
+    if (!self.editable) { return; }
     
     NSPoint mouseLocation = [theEvent locationInWindow];
     mouseLocation = [self convertPoint: mouseLocation fromView: nil];
@@ -339,7 +343,7 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
 }
 - (void)mouseDragged: (NSEvent*)theEvent
 {
-    if (!editable) { return; }
+    if (!self.editable) { return; }
     if (_draggingKnobAtIndex == -1) { return; }
     
     NSPoint mouseLocation = [theEvent locationInWindow];
@@ -360,9 +364,9 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
         [[NSCursor arrowCursor] set];
     }
 }
-- (void)mouseUp: (NSEvent*)theEvent
-{
-    if (!editable) { return; }
+
+- (void)mouseUp: (NSEvent*)theEvent {
+    if (!self.editable) { return; }
     
     NSPoint mouseLocation = [theEvent locationInWindow];
     mouseLocation = [self convertPoint: mouseLocation fromView: nil];
@@ -475,43 +479,44 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
     }
 }
 
-- (void)setGradient: (NSGradient*)gr
-{
-    // Not so sure about this... (let's just say I love Garbage Collection very much :)
-    if (![self.gradient isEqualTo: gr]) {
-        [self.gradient release];
-        gradient = [gr retain];
+- (void)setGradient: (NSGradient*)gr {
+    if (![self.gradient isEqualTo:gr]) {
+        [_gradient release];
+        _gradient = [gr retain];
         
         [self setNeedsDisplay: TRUE];
     }
 }
-- (void)setGradientHeight: (CGFloat)h
-{
-    gradientHeight = h;
+- (void)setGradientHeight: (CGFloat)h {
+    if (_gradientHeight == h)
+        return;
+    _gradientHeight = h;
     [self setNeedsDisplay: TRUE];
 }
-- (void)setDrawsChessboardBackground: (BOOL)v
-{
-    drawsChessboardBackground = v;
+
+- (void)setDrawsChessboardBackground: (BOOL)v {
+    if (_drawsChessboardBackground == v)
+        return;
+    
+    _drawsChessboardBackground = v;
     [self setNeedsDisplay: TRUE];
 }
-- (void)_setGradientWarningTarget: (NSGradient*)gr
-{
+
+- (void)_setGradientWarningTarget: (NSGradient*)gr {
     self.gradient = gr;
     if (self.target && self.action) {
         [target performSelector: action withObject: self];
     }
 }
 
-- (NSRect)_gradientBounds
-{
+- (NSRect)_gradientBounds {
     NSRect viewRect = [self bounds];
     viewRect.origin.x += kViewXOffset;
     viewRect.size.width -= kViewXOffset * 2;
     
-    if (gradientHeight > 0 && gradientHeight < [self bounds].size.height) {
-        viewRect.size.height = gradientHeight;
-        viewRect.origin.y += ([self bounds].size.height - gradientHeight) / 2;
+    if (_gradientHeight > 0 && _gradientHeight < [self bounds].size.height) {
+        viewRect.size.height = _gradientHeight;
+        viewRect.origin.y += ([self bounds].size.height - _gradientHeight) / 2;
     }
     
     return viewRect;

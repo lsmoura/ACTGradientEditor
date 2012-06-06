@@ -50,12 +50,7 @@
 @interface ACTGradientEditor : NSView {
     id target;
     SEL action;
-    
-    NSGradient* gradient;
-    CGFloat gradientHeight; // if (<= 0 || >= [view bounds]) { fill completely the view }
-    BOOL drawsChessboardBackground;
-    BOOL editable;
-    
+        
     @private
     NSInteger _draggingKnobAtIndex;
     NSInteger _editingKnobAtIndex;
@@ -64,7 +59,7 @@
 @property (assign) IBOutlet id target;
 @property (assign) IBOutlet SEL action;
 @property (retain) NSGradient* gradient;
-@property (assign) CGFloat gradientHeight;
+@property (assign) CGFloat gradientHeight; // if (<= 0 || >= [view bounds]) { fill completely the view }
 
 @property (assign) BOOL editable;
 @property (assign) BOOL drawsChessboardBackground;
