@@ -10,7 +10,7 @@
 #import "ACTGradientView.h"
 #import "ACTGradientEditor.h"
 
-@interface ACTGradientEditorAppDelegate : NSObject <NSApplicationDelegate>
+@interface ACTGradientEditorAppDelegate : NSObject <NSApplicationDelegate,ACTGradientEditorDelegate>
 {
     NSWindow* window;
     IBOutlet ACTGradientEditor* gradientEditor;

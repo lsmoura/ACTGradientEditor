@@ -47,17 +47,21 @@
 
 // -----------
 
+@class ACTGradientEditor;
+
+@protocol ACTGradientEditorDelegate <NSObject>
+
+-(void)GradientEditorChangedGradient:(ACTGradientEditor*)editor;
+
+@end
+
 @interface ACTGradientEditor : NSView {
-    id target;
-    SEL action;
-        
     @private
     NSInteger _draggingKnobAtIndex;
     NSInteger _editingKnobAtIndex;
 }
 
-@property (assign) IBOutlet id target;
-@property (assign) IBOutlet SEL action;
+@property (retain) id<ACTGradientEditorDelegate> delegate;
 @property (retain) NSGradient* gradient;
 @property (assign) CGFloat gradientHeight; // if (<= 0 || >= [view bounds]) { fill completely the view }
 

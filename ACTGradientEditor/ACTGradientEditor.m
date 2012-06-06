@@ -31,8 +31,7 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
 
 @implementation ACTGradientEditor
 
-@synthesize target = _target;
-@synthesize action = _action;
+@synthesize delegate = _delegate;
 @synthesize gradient = _gradient;
 @synthesize editable = _editable;
 @synthesize gradientHeight = _gradientHeight;
@@ -504,8 +503,9 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
 
 - (void)_setGradientWarningTarget: (NSGradient*)gr {
     self.gradient = gr;
-    if (self.target && self.action) {
-        [target performSelector: action withObject: self];
+
+    if (self.delegate) {
+        [self.delegate GradientEditorChangedGradient:self];
     }
 }
 

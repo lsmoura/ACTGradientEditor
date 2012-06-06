@@ -12,19 +12,20 @@
 
 @synthesize window;
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
-    [gradientEditor setTarget: self];
-    [gradientEditor setAction: @selector(gradientChanged:)];
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
+    [gradientEditor setDelegate:self];
     
     [self gradientChanged: self];
 }
 
-- (IBAction)gradientChanged: (id)sender
-{
+- (IBAction)gradientChanged: (id)sender {
     //[gradientEditor setGradientHeight: [slider doubleValue]];
     [gradientView setGradient: [gradientEditor gradient]];
     [gradientView setAngle: [angle doubleValue]];
+}
+
+- (void)GradientEditorChangedGradient:(ACTGradientEditor *)editor {
+    [self gradientChanged:editor];    
 }
 
 @end
