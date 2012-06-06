@@ -10,22 +10,21 @@
 
 @implementation ACTGradientView
 
-@synthesize gradient;
-@synthesize angle;
+@synthesize gradient = _gradient;
+@synthesize angle = _angle;
 
-- (id)initWithFrame:(NSRect)frame
-{
+- (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame: frame];
     if (self) {
-        self.gradient = [[NSGradient alloc] initWithStartingColor: [NSColor whiteColor] endingColor: [NSColor blackColor]];
+        self.gradient = [[NSGradient alloc] initWithStartingColor: [NSColor whiteColor]
+                                                      endingColor: [NSColor blackColor]];
         self.angle = 270;
     }
     
     return self;
 }
 
-- (void)drawRect: (NSRect)dirtyRect
-{
+- (void)drawRect: (NSRect)dirtyRect {
     if (self.gradient) {
         [self.gradient drawInRect: [self bounds] angle: self.angle];
     }
@@ -34,19 +33,21 @@
     }
 }
 
-- (void)setGradient: (NSGradient*)gr
-{
+- (void)setGradient: (NSGradient*)gr {
     // Not so sure about this as for memory... (let's just say I love Garbage Collection very much :)
-    if (![self.gradient isEqualTo: gr]) {
-        [self.gradient release];
-        gradient = [gr retain];
+    if (![self.gradient isEqualTo:gr]) {
+        [_gradient release];
+        _gradient = [gr retain];
         
         [self setNeedsDisplay: TRUE];
     }
 }
-- (void)setAngle: (CGFloat)an
-{
-    angle = an;
+
+- (void)setAngle: (CGFloat)an {
+    if (_angle == an)
+        return;
+    
+    _angle = an;
     [self setNeedsDisplay: TRUE];
 }
 

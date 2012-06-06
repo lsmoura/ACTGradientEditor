@@ -9,10 +9,6 @@
 #import <Cocoa/Cocoa.h>
 
 @interface ACTGradientView : NSView
-{
-    NSGradient* gradient;
-    CGFloat angle;
-}
 
 @property (retain) NSGradient* gradient;
 @property CGFloat angle;
