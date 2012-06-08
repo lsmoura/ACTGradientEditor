@@ -23,12 +23,12 @@
     NSInteger _editingKnobAtIndex;
 }
 
-@property (retain) id<ACTGradientEditorDelegate> delegate;
-@property (retain) NSGradient* gradient;
-@property (assign) CGFloat gradientHeight; // if (<= 0 || >= [view bounds]) { fill completely the view }
+@property (nonatomic, retain) id<ACTGradientEditorDelegate> delegate;
+@property (nonatomic, retain) NSGradient* gradient;
+@property (nonatomic, assign) CGFloat gradientHeight; // if (<= 0 || >= [view bounds]) { fill completely the view }
 
 @property (assign) BOOL editable;
-@property (assign) BOOL drawsChessboardBackground;
+@property (nonatomic, assign) BOOL drawsChessboardBackground;
 
 // Not that much functions actually:
 
