@@ -54,6 +54,8 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
 - (NSRect)_gradientBounds;
 - (NSPoint)_viewPointFromGradientLocation: (CGFloat)location;
 - (CGFloat)_gradientLocationFromViewPoint: (NSPoint)point;
+
+- (void)propagateValue:(id)value forBinding:(NSString*)binding;
 @end
 
 // ------------
@@ -86,8 +88,7 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
     return self;
 }
 
-- (void)drawRect: (NSRect)dirtyRect
-{
+- (void)drawRect: (NSRect)dirtyRect {
     [NSGraphicsContext saveGraphicsState];
 
     NSRect viewRect = [self _gradientBounds];
@@ -539,6 +540,8 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
     if (self.delegate) {
         [self.delegate GradientEditorChangedGradient:self];
     }
+    
+    [self propagateValue:self.gradient forBinding:@"gradient"];
 }
 
 - (NSRect)_gradientBounds {
@@ -558,7 +561,68 @@ static BOOL pointsWithinDistance(NSPoint p1, NSPoint p2, CGFloat d) {
 }
 
 - (CGFloat)_gradientLocationFromViewPoint: (NSPoint)point {
-    return (point.x - kViewXOffset) / [self _gradientBounds].size.width;
+    return((point.x - kViewXOffset) / [self _gradientBounds].size.width);
+}
+
+#pragma mark - Bindings functionality
+
++ (void)initialize {
+    [self exposeBinding:@"gradient"];
+}
+
+- (Class)valueClassForBinding:(NSString *)binding {
+    if ([binding isEqualToString:@"gradient"]) {
+        return([NSGradient class]);
+    }
+
+    return(nil);
+}
+
+- (NSArray*)exposedBindings {
+    return([NSArray arrayWithObjects:@"gradient",nil]);
+}
+
+- (void)propagateValue:(id)value forBinding:(NSString*)binding {
+    // Kindly borrowed from tomdalling at http://www.tomdalling.com/blog/cocoa/implementing-your-own-cocoa-bindings
+    NSParameterAssert(binding != nil);
+    
+    NSDictionary *bindingInfo = [self infoForBinding:binding];
+    if (!bindingInfo)
+        return;
+    
+    NSDictionary *bindingOptions = [bindingInfo objectForKey:NSOptionsKey];
+    if (bindingOptions) {
+        NSValueTransformer *transformer = [bindingOptions valueForKey:NSValueTransformerBindingOption];
+        if (!transformer || (id)transformer == [NSNull null]) {
+            NSString *transformerName = [bindingOptions valueForKey:NSValueTransformerBindingOption];
+            if (transformerName && (id)transformerName != [NSNull null]) {
+                transformer = [NSValueTransformer valueTransformerForName:transformerName];
+            }
+        }
+        
+        if (transformer && (id)transformer != [NSNull null]) {
+            if ([[transformer class] allowsReverseTransformation]) {
+                value = [transformer reverseTransformedValue:value];
+            }
+            else {
+                NSLog(@"WARNING: binding\"%@\" has value transformer, but it doesn't allow reverse transformations in %s", binding, __PRETTY_FUNCTION__);
+            }
+        }
+    }
+    
+    id boundObject = [bindingInfo objectForKey:NSObservedObjectKey];
+    if (!boundObject || boundObject == [NSNull null]) {
+        NSLog(@"ERROR: NSObservedObjectKey was nil for binding \"%@\" in %s", binding, __PRETTY_FUNCTION__);
+        return;
+    }
+    
+    NSString *boundKeyPath = [bindingInfo objectForKey:NSObservedKeyPathKey];
+    if (!boundKeyPath || (id)boundKeyPath == [NSNull null]) {
+        NSLog(@"ERROR: NSObservedKeyPathKey was nil for binding \"%@\" in %s", binding, __PRETTY_FUNCTION__);
+        return;
+    }
+    
+    [boundObject setValue:value forKeyPath:boundKeyPath];
 }
 
 @end
